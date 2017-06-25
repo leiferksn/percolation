@@ -1,7 +1,6 @@
-package net.almaak;
-
 import edu.princeton.cs.algs4.StdOut;
 import edu.princeton.cs.algs4.StdRandom;
+import edu.princeton.cs.algs4.StdStats;
 
 /**
  * Created by leiferksn on 19.06.17.
@@ -11,6 +10,9 @@ public class PercolationStats {
     private double[] thresholds = null;
 
     public PercolationStats(int n, int trials) {
+        if (n <= 0 || trials <= 0) {
+            throw new IllegalArgumentException("Number of trials and/or number of sites must be positive.");
+        }
         thresholds = new double[trials];
         for (int i = 0; i < trials; i++) {
             Percolation p = new Percolation(n);
@@ -18,9 +20,9 @@ public class PercolationStats {
                 int random = StdRandom.uniform(1, n * n);
                 int row = 0;
                 if (random % n  == 0) {
-                    row = (int)Math.floor((double)random / n);
+                       row = (int) Math.floor((double) random / n);
                 } else {
-                    row = (int)Math.floor((double)random / n) + 1;
+                    row = (int) Math.floor((double) random / n) + 1;
                 }
                 int col = (random + n) - row * n;
                 p.open(row, col);
@@ -30,20 +32,11 @@ public class PercolationStats {
     }
 
     public double mean() {
-        double sum = 0d;
-        for (int i = 0; i < thresholds.length; i++) {
-            sum += thresholds[i];
-        }
-        return sum / thresholds.length;
+        return StdStats.mean(thresholds);
     }
 
     public double stddev() {
-        double devsum = 0d;
-        for (int i = 0; i < thresholds.length; i++) {
-            double nom = Math.pow(thresholds[i] - mean(), 2);
-            devsum += nom;
-        }
-        return Math.sqrt(devsum/(thresholds.length - 1));
+        return StdStats.stddev(thresholds);
     }
 
     public double confidenceLo() {

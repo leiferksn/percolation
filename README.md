@@ -1,4 +1,4 @@
-net.almaak.Percolation With Weighted Quick Union Find
+Percolation With Weighted Quick Union Find
 
-Programming Assignment 1: net.almaak.Percolation
+Programming Assignment 1: Percolation
 http://coursera.cs.princeton.edu/algs4/

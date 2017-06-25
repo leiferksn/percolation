@@ -1,8 +1,3 @@
-package net.almaak;
-
-import edu.princeton.cs.algs4.StdIn;
-import edu.princeton.cs.algs4.StdOut;
-import edu.princeton.cs.algs4.StdRandom;
 import edu.princeton.cs.algs4.WeightedQuickUnionUF;
 
 public class Percolation {
@@ -45,11 +40,14 @@ public class Percolation {
     }
 
     public void open(int row, int col) {
-        withinRanges(row, col);
-
         if (row * col < 0 ||  row * col > dimensions * dimensions) {
-            throw new IllegalArgumentException("You are trying to open non existing site");
+            throw new IllegalArgumentException("You are trying to open non existing site.");
         }
+
+        if (!withinRanges(row, col)) {
+            throw new IndexOutOfBoundsException("Row or Column is outside grid.");
+        }
+
         if (!isOpen(row, col)) {
             grid[row][col] = 1;
             numberOfOpenSites++;
@@ -60,7 +58,7 @@ public class Percolation {
             int up = getArrayElementByCoordinates(row - 1, col);
             int down = getArrayElementByCoordinates(row + 1, col);
 
-            if (col > 1 && isOpen(row, col -1 ) && !weightedQuickUnionUF.connected(element, left)) {
+            if (col > 1 && isOpen(row, col -1) && !weightedQuickUnionUF.connected(element, left)) {
                 weightedQuickUnionUF.union(element, left);
             }
 
@@ -79,11 +77,13 @@ public class Percolation {
     }
 
     private int getArrayElementByCoordinates(int x, int y) {
-        return (x - 1) * dimensions + (y - 1);
+        return (x - 1) * dimensions + y;
     }
 
     public boolean isOpen(int row, int col) {
-        withinRanges(row, col);
+        if (!withinRanges(row, col)) {
+            throw new IndexOutOfBoundsException("Row or Column is outside grid.");
+        }
         return grid[row][col] == 1;
     }
 
@@ -92,7 +92,9 @@ public class Percolation {
      * weightedQuickUnionUF, without virtual nodes
      */
     public boolean isFull(int row, int col) {
-        withinRanges(row, col);
+        if (!withinRanges(row, col)) {
+            throw new IndexOutOfBoundsException("Row or Column is outside grid.");
+        }
         int element = getArrayElementByCoordinates(row, col);
         for (int i = 1; i <= dimensions; i++) {
             if (isOpen(1, i) && isOpen(row, col)
@@ -108,48 +110,13 @@ public class Percolation {
     }
 
     public boolean percolates() {
-        return weightedQuickUnionUF.connected(virtualTop, virtualBottom) ;
-    }
-
-    public static void main(String[] args) {
-        int n = StdIn.readInt();
-        long start = System.currentTimeMillis();
-        Percolation percolation = new Percolation(n);
-
-        while (!percolation.percolates()) {
-            int random = StdRandom.uniform(0, n * n - 1);
-            int row = (int)Math.floor((double)random / n);
-            int col = random - row * n;
-            percolation.open(row, col);
-        }
-
-        long end = System.currentTimeMillis() - start;
-        printSites(percolation, end);
-
+        return weightedQuickUnionUF.connected(virtualTop, virtualBottom);
     }
 
     private boolean withinRanges(int row, int col) {
-        if (row < 0 || row > dimensions - 1 || col < 0 || col > dimensions - 1) {
+        if (row < 0 || row > dimensions || col < 0 || col > dimensions) {
             return false;
         }
         return true;
-    }
-
-    private static void printSites(Percolation percolation, long timeToFinish) {
-        int dimensions = percolation.dimensions;
-        for (int i = 0; i < dimensions; i++) {
-            StringBuffer sb = new StringBuffer();
-            for (int j = 0; j < dimensions; j++) {
-                sb.append(" ");
-                if (percolation.isOpen(i,j)) {
-                    sb.append("◼");
-                } else {
-                    sb.append("◻");
-                }
-            }
-            StdOut.println(sb.toString());
-        }
-        double threshold =  (double) percolation.numberOfOpenSites() / (dimensions * dimensions);
-        StdOut.println(percolation.numberOfOpenSites() + " [ " + threshold + " ]" + " in " + ((double)timeToFinish / 1000 ) + " sec.");
     }
 }
