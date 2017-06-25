@@ -8,6 +8,8 @@ import edu.princeton.cs.algs4.StdStats;
 public class PercolationStats {
 
     private double[] thresholds = null;
+    private double mean = 0d;
+    private double stddev = 0d;
 
     public PercolationStats(int n, int trials) {
         if (n <= 0 || trials <= 0) {
@@ -29,14 +31,16 @@ public class PercolationStats {
             }
             thresholds[i] = (double) p.numberOfOpenSites() / (n * n);
         }
+        stddev = StdStats.stddev(thresholds);
+        mean = StdStats.mean(thresholds);
     }
 
     public double mean() {
-        return StdStats.mean(thresholds);
+        return mean;
     }
 
     public double stddev() {
-        return StdStats.stddev(thresholds);
+        return stddev;
     }
 
     public double confidenceLo() {

@@ -93,7 +93,7 @@ public class Percolation {
      */
     public boolean isFull(int row, int col) {
         if (!withinRanges(row, col)) {
-            throw new IndexOutOfBoundsException("Row or Column is outside grid.");
+            throw new IndexOutOfBoundsException("Row or Column is outside of grid.");
         }
         int element = getArrayElementByCoordinates(row, col);
         for (int i = 1; i <= dimensions; i++) {
