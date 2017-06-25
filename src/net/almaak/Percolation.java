@@ -21,21 +21,21 @@ public class Percolation {
         }
 
         dimensions = n;
-        int maxIndex = dimensions * dimensions - 1;
+        int maxIndex = dimensions * dimensions;
 
         weightedQuickUnionUF = new WeightedQuickUnionUF(dimensions * dimensions + 2);
-        virtualTop = maxIndex + 1;
-        virtualBottom = maxIndex + 2;
+        virtualTop = 0;
+        virtualBottom = maxIndex + 1;
 
         // init
-        grid = new int[dimensions][dimensions];
-        for (int i = 0; i < dimensions; i++) {
-            for (int j = 0; j < dimensions; j++) {
+        grid = new int[dimensions + 1][dimensions + 1];
+        for (int i = 1; i <= dimensions; i++) {
+            for (int j = 1; j <= dimensions; j++) {
                 grid[i][j] = 0;
             }
         }
 
-        for (int i = 0; i < dimensions; i++) {
+        for (int i = 1; i <= dimensions; i++) {
             weightedQuickUnionUF.union(virtualTop, 1 * i);
         }
 
@@ -60,26 +60,26 @@ public class Percolation {
             int up = getArrayElementByCoordinates(row - 1, col);
             int down = getArrayElementByCoordinates(row + 1, col);
 
-            if (col > 0 && isOpen(row, col -1 ) && !weightedQuickUnionUF.connected(element, left)) {
+            if (col > 1 && isOpen(row, col -1 ) && !weightedQuickUnionUF.connected(element, left)) {
                 weightedQuickUnionUF.union(element, left);
             }
 
-            if (row > 0 && isOpen(row - 1, col) && !weightedQuickUnionUF.connected(element, up)) {
+            if (row > 1 && isOpen(row - 1, col) && !weightedQuickUnionUF.connected(element, up)) {
                 weightedQuickUnionUF.union(element, up);
             }
 
-            if (col < dimensions - 1 && isOpen(row, col + 1) && !weightedQuickUnionUF.connected(element, right)) {
+            if (col < dimensions && isOpen(row, col + 1) && !weightedQuickUnionUF.connected(element, right)) {
                     weightedQuickUnionUF.union(element, right);
             }
 
-            if (row < dimensions - 1 && isOpen(row + 1, col) && !weightedQuickUnionUF.connected(element, down)) {
+            if (row < dimensions && isOpen(row + 1, col) && !weightedQuickUnionUF.connected(element, down)) {
                 weightedQuickUnionUF.union(element, down);
             }
         }
     }
 
     private int getArrayElementByCoordinates(int x, int y) {
-        return x * dimensions + y;
+        return (x - 1) * dimensions + (y - 1);
     }
 
     public boolean isOpen(int row, int col) {
@@ -87,11 +87,15 @@ public class Percolation {
         return grid[row][col] == 1;
     }
 
+    /**
+     * for visualization to work for all cases, we need a second
+     * weightedQuickUnionUF, without virtual nodes
+     */
     public boolean isFull(int row, int col) {
         withinRanges(row, col);
         int element = getArrayElementByCoordinates(row, col);
-        for (int i = 0; i < dimensions; i++) {
-            if (isOpen(0, i) && isOpen(row, col)
+        for (int i = 1; i <= dimensions; i++) {
+            if (isOpen(1, i) && isOpen(row, col)
                     && weightedQuickUnionUF.connected(element, i)) {
                 return true;
             }

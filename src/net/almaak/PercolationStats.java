@@ -15,9 +15,14 @@ public class PercolationStats {
         for (int i = 0; i < trials; i++) {
             Percolation p = new Percolation(n);
             while (!p.percolates()) {
-                int random = StdRandom.uniform(0, n * n - 1);
-                int row = (int)Math.floor((double)random / n);
-                int col = random - row * n;
+                int random = StdRandom.uniform(1, n * n);
+                int row = 0;
+                if (random % n  == 0) {
+                    row = (int)Math.floor((double)random / n);
+                } else {
+                    row = (int)Math.floor((double)random / n) + 1;
+                }
+                int col = (random + n) - row * n;
                 p.open(row, col);
             }
             thresholds[i] = (double) p.numberOfOpenSites() / (n * n);
